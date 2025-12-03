@@ -16,7 +16,8 @@ class DemandeDeStageType extends AbstractType
         $builder
             ->add('stage', EntityType::class, [
                 'class' => Stage::class,
-                'choice_label' => 'titre'
+                'choice_label' => 'titre',
+                'placeholder' => 'Choisissez un stage',
             ]);
     }
 
