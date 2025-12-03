@@ -1,0 +1,25 @@
+{% extends 'base_tekup.html.twig' %}
+
+{% block title %}Étudiant - Mes stages{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Mes stages et demandes</h1>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Consulter les stages</h5>
+                    <a href="{{ path('app_stage_index') }}" class="btn btn-tek">Voir les offres</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Mes demandes</h5>
+                    <a href="{{ path('app_demande_de_stage_index') }}" class="btn btn-tek">Mes demandes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
