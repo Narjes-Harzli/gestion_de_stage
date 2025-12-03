@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Encadrant{% endblock %}
+
+{% block body %}
+    <h1>Encadrant</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ encadrant.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ encadrant.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ encadrant.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ encadrant.email }}</td>
+            </tr>
+            <tr>
+                <th>Telephone</th>
+                <td>{{ encadrant.telephone }}</td>
+            </tr>
+            <tr>
+                <th>Specialite</th>
+                <td>{{ encadrant.specialite }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_encadrant_index') }}">back to list</a>
+
+    <a href="{{ path('app_encadrant_edit', {'id': encadrant.id}) }}">edit</a>
+
+    {{ include('encadrant/_delete_form.html.twig') }}
+{% endblock %}

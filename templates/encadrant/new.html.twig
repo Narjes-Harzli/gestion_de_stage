@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Encadrant{% endblock %}
+
+{% block body %}
+    <h1>Create new Encadrant</h1>
+
+    {{ include('encadrant/_form.html.twig') }}
+
+    <a href="{{ path('app_encadrant_index') }}">back to list</a>
+{% endblock %}
