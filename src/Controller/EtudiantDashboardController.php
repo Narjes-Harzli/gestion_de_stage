@@ -4,15 +4,13 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-final class EtudiantDashboardController extends AbstractController
+class EtudiantDashboardController extends AbstractController
 {
-    #[Route('/etudiant/dashboard', name: 'app_etudiant_dashboard')]
+    #[Route('/etudiant', name: 'app_etudiant_dashboard_index')]
     public function index(): Response
     {
-        return $this->render('etudiant_dashboard/index.html.twig', [
-            'controller_name' => 'EtudiantDashboardController',
-        ]);
+        return $this->render('etudiant_dashboard/index.html.twig');
     }
 }

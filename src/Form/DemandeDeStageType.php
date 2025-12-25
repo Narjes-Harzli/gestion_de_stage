@@ -8,6 +8,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 class DemandeDeStageType extends AbstractType
 {
@@ -17,7 +19,37 @@ class DemandeDeStageType extends AbstractType
             ->add('stage', EntityType::class, [
                 'class' => Stage::class,
                 'choice_label' => 'titre',
-                'placeholder' => 'Choisissez un stage',
+                'label' => 'Stage'
+            ])
+            ->add('cvFile', FileType::class, [
+                'label' => 'CV (PDF ou Word)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'application/pdf',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                        ],
+                        'mimeTypesMessage' => 'Veuillez uploader un PDF ou un Word'
+                    ])
+                ]
+            ])
+            ->add('lettreFile', FileType::class, [
+                'label' => 'Lettre de motivation',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'application/pdf',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                        ],
+                        'mimeTypesMessage' => 'Veuillez uploader un PDF ou un Word'
+                    ])
+                ]
             ]);
     }
 

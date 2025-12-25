@@ -6,23 +6,21 @@ use App\Entity\DemandeDeStage;
 use App\Form\DemandeDeStageType;
 use App\Repository\DemandeDeStageRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[IsGranted('ROLE_USER')]
 #[Route('/demande')]
 class DemandeDeStageController extends AbstractController
 {
     #[Route('/', name: 'demande_index', methods: ['GET'])]
     public function index(DemandeDeStageRepository $repo): Response
     {
-        // un étudiant ne voit que ses propres demandes
         $demandes = $this->isGranted('ROLE_ADMIN')
             ? $repo->findAll()
-            : $repo->findBy(['etudiant' => $this->getUser()]);
+            : $repo->findBy(['etudiant' => $this->getUser()->getEtudiant()]);
 
         return $this->render('demande_de_stage/index.html.twig', [
             'demandes' => $demandes,
@@ -37,8 +35,26 @@ class DemandeDeStageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $demande->setEtudiant($this->getUser());   // utilisateur connecté
+            /** @var UploadedFile $cvFile */
+            $cvFile = $form->get('cvFile')->getData();
+            if ($cvFile) {
+                $newFilename = uniqid().'.'.$cvFile->guessExtension();
+                $cvFile->move($this->getParameter('kernel.project_dir').'/public/uploads', $newFilename);
+                $demande->setCvFile($newFilename);
+            }
+
+            /** @var UploadedFile $lettreFile */
+            $lettreFile = $form->get('lettreFile')->getData();
+            if ($lettreFile) {
+                $newFilename = uniqid().'.'.$lettreFile->guessExtension();
+                $lettreFile->move($this->getParameter('kernel.project_dir').'/public/uploads', $newFilename);
+                $demande->setLettreFile($newFilename);
+            }
+
+            $demande->setEtudiant($this->getUser()->getEtudiant());
+            $demande->setDateDemande(new \DateTime());
             $demande->setStatut('en attente');
+
             $em->persist($demande);
             $em->flush();
 
@@ -54,7 +70,7 @@ class DemandeDeStageController extends AbstractController
     #[Route('/{id}', name: 'demande_show', methods: ['GET'])]
     public function show(DemandeDeStage $demande): Response
     {
-        $this->denyAccessUnlessGranted('VIEW', $demande); // voter si besoin
+        $this->denyAccessUnlessGranted('VIEW', $demande);
         return $this->render('demande_de_stage/show.html.twig', [
             'demande' => $demande,
         ]);
