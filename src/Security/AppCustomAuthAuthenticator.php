@@ -50,8 +50,8 @@ class AppCustomAuthAuthenticator extends AbstractLoginFormAuthenticator
         // Redirection selon le rôle
         $role = $token->getUser()->getRole();
         return match ($role) {
-            'ADMIN'     => new RedirectResponse($this->urlGenerator->generate('app_admin_index')),
-            'ENCADRANT' => new RedirectResponse($this->urlGenerator->generate('app_encadrant_dashboard_index')),
+            'ADMIN'     => new RedirectResponse($this->urlGenerator->generate('app_admin')),
+            'ENCADRANT' => new RedirectResponse($this->urlGenerator->generate('app_encadrant_dashboard')),
             default     => new RedirectResponse($this->urlGenerator->generate('app_etudiant_dashboard_index')),
         };
     }

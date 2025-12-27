@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Encadrant - Étudiants{% endblock %}
+
+{% block body %}
+<h1 class="mb-4"><i class="fas fa-users"></i> Étudiants encadrés</h1>
+
+{% if etudiants is empty %}
+    <div class="alert alert-info">Aucun étudiant encadré pour le moment.</div>
+{% else %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for u in etudiants %}
+                <tr>
+                    <td>{{ u.email }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

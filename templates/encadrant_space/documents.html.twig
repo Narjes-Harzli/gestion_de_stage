@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Encadrant - Documents{% endblock %}
+
+{% block body %}
+<h1 class="mb-4"><i class="fas fa-folder-open"></i> Documents des stagiaires</h1>
+
+{% if documents is empty %}
+    <div class="alert alert-info">Aucun document.</div>
+{% else %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>Type</th>
+                <th>Fichier</th>
+                <th>Étudiant</th>
+                <th>Stage</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for doc in documents %}
+                <tr>
+                    <td>{{ doc.type }}</td>
+                    <td>{{ doc.fichier }}</td>
+                    <td>{{ doc.demandestage.etudiant.email }}</td>
+                    <td>{{ doc.demandestage.stage.titre }}</td>
+                    <td>{{ doc.statutValidation }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info" href="{{ path('app_document_show', {'id': doc.id}) }}">Voir</a>
+                        <form method="post" action="{{ path('app_encadrant_space_document_valider', {'id': doc.id}) }}" style="display:inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('doc_status' ~ doc.id) }}">
+                            <button class="btn btn-sm btn-success" {% if doc.statutValidation == 'Validé' %}disabled{% endif %}>Valider</button>
+                        </form>
+                        <form method="post" action="{{ path('app_encadrant_space_document_refuser', {'id': doc.id}) }}" style="display:inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('doc_status' ~ doc.id) }}">
+                            <button class="btn btn-sm btn-danger" {% if doc.statutValidation == 'Refusé' %}disabled{% endif %}>Refuser</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

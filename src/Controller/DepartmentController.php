@@ -14,6 +14,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/department')]
 final class DepartmentController extends AbstractController
 {
+    private function denyUnlessAdminOrEncadrant(): void
+    {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_ENCADRANT')) {
+            throw $this->createAccessDeniedException();
+        }
+    }
+
     #[Route(name: 'app_department_index', methods: ['GET'])]
     public function index(DepartmentRepository $departmentRepository): Response
     {
@@ -25,6 +32,8 @@ final class DepartmentController extends AbstractController
     #[Route('/new', name: 'app_department_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyUnlessAdminOrEncadrant();
+
         $department = new Department();
         $form = $this->createForm(DepartmentType::class, $department);
         $form->handleRequest($request);
@@ -53,6 +62,8 @@ final class DepartmentController extends AbstractController
     #[Route('/{id}/edit', name: 'app_department_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Department $department, EntityManagerInterface $entityManager): Response
     {
+        $this->denyUnlessAdminOrEncadrant();
+
         $form = $this->createForm(DepartmentType::class, $department);
         $form->handleRequest($request);
 
@@ -71,6 +82,8 @@ final class DepartmentController extends AbstractController
     #[Route('/{id}', name: 'app_department_delete', methods: ['POST'])]
     public function delete(Request $request, Department $department, EntityManagerInterface $entityManager): Response
     {
+        $this->denyUnlessAdminOrEncadrant();
+
         if ($this->isCsrfTokenValid('delete'.$department->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($department);
             $entityManager->flush();

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails demande{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Détails de la demande</h1>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <p><strong>Étudiant:</strong> {{ demandestage.etudiant.email }}</p>
+        <p><strong>Stage:</strong> {{ demandestage.stage.titre }}</p>
+        <p><strong>Statut:</strong> {{ demandestage.statut }}</p>
+        <p><strong>Date:</strong> {{ demandestage.datedemande|date('d/m/Y') }}</p>
+        {% if demandestage.avisEncadrant %}
+            <p><strong>Avis encadrant:</strong> {{ demandestage.avisEncadrant }}</p>
+        {% endif %}
+        {% if demandestage.note is not null %}
+            <p><strong>Note:</strong> {{ demandestage.note }}</p>
+        {% endif %}
+    </div>
+</div>
+
+{% set can_manage = is_granted('ROLE_ADMIN') or is_granted('ROLE_ENCADRANT') or (is_granted('ROLE_ETUDIANT') and app.user and demandestage.etudiant.id == app.user.id) %}
+
+{% if can_manage %}
+    <a class="btn btn-warning" href="{{ path('app_demandestage_edit', {'id': demandestage.id}) }}">Modifier</a>
+{% endif %}
+
+<a class="btn btn-secondary" href="{{ path('app_demandestage_index') }}">Retour</a>
+
+{% if can_manage %}
+    <form method="post" action="{{ path('app_demandestage_delete', {'id': demandestage.id}) }}" style="display:inline" onsubmit="return confirm('Supprimer cette demande ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ demandestage.id) }}">
+        <button class="btn btn-danger">Supprimer</button>
+    </form>
+{% endif %}
+{% endblock %}

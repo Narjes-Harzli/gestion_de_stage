@@ -23,12 +23,17 @@
                 <th>Dateupload</th>
                 <td>{{ document.dateupload ? document.dateupload|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ document.statutValidation }}</td>
+            </tr>
         </tbody>
     </table>
 
     <a href="{{ path('app_document_index') }}">back to list</a>
 
-    <a href="{{ path('app_document_edit', {'id': document.id}) }}">edit</a>
-
-    {{ include('document/_delete_form.html.twig') }}
+    {% if is_granted('ROLE_ETUDIANT') %}
+        <a href="{{ path('app_document_edit', {'id': document.id}) }}">edit</a>
+        {{ include('document/_delete_form.html.twig') }}
+    {% endif %}
 {% endblock %}

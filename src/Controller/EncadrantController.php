@@ -42,7 +42,7 @@ final class EncadrantController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_encadrant_show', methods: ['GET'])]
+    #[Route('/{id<\\d+>}', name: 'app_encadrant_show', methods: ['GET'])]
     public function show(Encadrant $encadrant): Response
     {
         return $this->render('encadrant/show.html.twig', [
@@ -50,7 +50,7 @@ final class EncadrantController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_encadrant_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id<\\d+>}/edit', name: 'app_encadrant_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Encadrant $encadrant, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(EncadrantType::class, $encadrant);
@@ -68,7 +68,7 @@ final class EncadrantController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_encadrant_delete', methods: ['POST'])]
+    #[Route('/{id<\\d+>}', name: 'app_encadrant_delete', methods: ['POST'])]
     public function delete(Request $request, Encadrant $encadrant, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$encadrant->getId(), $request->getPayload()->getString('_token'))) {

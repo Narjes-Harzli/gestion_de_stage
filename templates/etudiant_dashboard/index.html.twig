@@ -1,25 +1,267 @@
-{% extends 'base_tekup.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Étudiant - Mes stages{% endblock %}
+{% block title %}Espace Étudiant - Tableau de bord{% endblock %}
 
 {% block body %}
-    <h1 class="mb-4">Mes stages et demandes</h1>
-    <div class="row g-3">
-        <div class="col-md-6">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Consulter les stages</h5>
-                    <a href="{{ path('app_stage_index') }}" class="btn btn-tek">Voir les offres</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Mes demandes</h5>
-                    <a href="{{ path('app_demande_de_stage_index') }}" class="btn btn-tek">Mes demandes</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-user-graduate"></i> Espace Étudiant</h1>
+    <div>
+        <span class="badge badge-primary mr-2">{{ app.user.email }}</span>
+        <span class="badge badge-info">ÉTUDIANT</span>
+    </div>
+</div>
+
+<!-- Message de bienvenue -->
+<div class="alert alert-info">
+    <h4><i class="fas fa-info-circle"></i> Bienvenue dans votre espace étudiant !</h4>
+    <p class="mb-0">
+        Ici vous pouvez gérer vos demandes de stage, consulter les offres disponibles et suivre vos documents.
+    </p>
+</div>
+
+<!-- Statistiques personnelles -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ mes_demandes|default(0) }}</h4>
+                        <p class="mb-0">Mes demandes</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-file-alt fa-2x"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ mes_stages|default(0) }}</h4>
+                        <p class="mb-0">Stages validés</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ mes_documents|default(0) }}</h4>
+                        <p class="mb-0">Documents</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-folder fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions rapides -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Actions rapides</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <a href="{{ path('app_demandestage_new') }}" class="btn btn-primary btn-block">
+                            <i class="fas fa-plus"></i> Nouvelle demande de stage
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="{{ path('app_document_new') }}" class="btn btn-success btn-block">
+                            <i class="fas fa-upload"></i> Déposer un document
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="{{ path('app_stage_index') }}" class="btn btn-info btn-block">
+                            <i class="fas fa-search"></i> Voir les offres
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mes demandes -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-file-alt"></i> Mes demandes de stage</h5>
+                <div>
+                    <a href="{{ path('app_demandestage_index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                    <a href="{{ path('app_demandestage_new') }}" class="btn btn-sm btn-primary">Nouvelle demande</a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if mes_demandes_recentes is defined and mes_demandes_recentes|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Stage</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for demande in mes_demandes_recentes %}
+                                    <tr>
+                                        <td>{{ demande.datedemande ? demande.datedemande|date('d/m/Y') : '' }}</td>
+                                        <td>{{ demande.stage.titre }}</td>
+                                        <td>
+                                            {% if demande.statut == 'EN_ATTENTE' %}
+                                                <span class="badge badge-warning">En attente</span>
+                                            {% elseif demande.statut == 'VALIDE' %}
+                                                <span class="badge badge-success">Validé</span>
+                                            {% elseif demande.statut == 'REFUSE' %}
+                                                <span class="badge badge-danger">Refusé</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('app_demandestage_show', {'id': demande.id}) }}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if demande.statut == 'EN_ATTENTE' %}
+                                                <a href="{{ path('app_demandestage_edit', {'id': demande.id}) }}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Vous n'avez pas encore de demande de stage.</p>
+                        <a href="{{ path('app_demandestage_new') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Créer votre première demande
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mes documents -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-folder"></i> Mes documents</h5>
+                <div>
+                    <a href="{{ path('app_document_index') }}" class="btn btn-sm btn-outline-success">Voir tout</a>
+                    <a href="{{ path('app_document_new') }}" class="btn btn-sm btn-success">Nouveau document</a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if mes_documents_recents is defined and mes_documents_recents|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Demande</th>
+                                    <th>Date</th>
+                                    <th>Validation</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for document in mes_documents_recents %}
+                                    <tr>
+                                        <td>{{ document.type }}</td>
+                                        <td>{{ document.demandestage.stage.titre }}</td>
+                                        <td>{{ document.dateupload ? document.dateupload|date('d/m/Y') : '' }}</td>
+                                        <td>
+                                            {% if document.statutValidation == 'Validé' %}
+                                                <span class="badge badge-success">Validé</span>
+                                            {% else %}
+                                                <span class="badge badge-warning">En attente</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('app_document_show', {'id': document.id}) }}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ document.fichier }}" class="btn btn-sm btn-primary" target="_blank">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Vous n'avez pas encore déposé de document.</p>
+                        <a href="{{ path('app_document_new') }}" class="btn btn-success">
+                            <i class="fas fa-upload"></i> Déposer un document
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Offres disponibles -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-briefcase"></i> Offres de stage disponibles</h5>
+                <a href="{{ path('app_stage_index') }}" class="btn btn-sm btn-outline-info">Voir tout</a>
+            </div>
+            <div class="card-body">
+                {% if stages_disponibles is defined and stages_disponibles|length > 0 %}
+                    <div class="row">
+                        {% for stage in stages_disponibles %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ stage.titre }}</h6>
+                                        <p class="card-text text-muted small">{{ stage.typestage }} - {{ stage.duree }}</p>
+                                        <p class="card-text">{{ stage.department.nom }}</p>
+                                        <a href="{{ path('app_stage_show', {'id': stage.id}) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> Détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aucune offre de stage disponible pour le moment.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

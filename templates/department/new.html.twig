@@ -1,11 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Department{% endblock %}
+{% block title %}Nouveau Département{% endblock %}
 
 {% block body %}
-    <h1>Create new Department</h1>
+<h1 class="mb-4">Ajouter un département</h1>
 
-    {{ include('department/_form.html.twig') }}
-
-    <a href="{{ path('app_department_index') }}">back to list</a>
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.description) }}
+            <button class="btn btn-success">Enregistrer</button>
+            <a class="btn btn-secondary" href="{{ path('app_department_index') }}">Retour</a>
+        {{ form_end(form) }}
+    </div>
+</div>
 {% endblock %}
