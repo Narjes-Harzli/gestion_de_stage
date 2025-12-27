@@ -1,0 +1,297 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Encadrant - Tableau de bord{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-chalkboard-teacher"></i> Espace Encadrant</h1>
+    <div>
+        <span class="badge badge-primary mr-2">{{ app.user.email }}</span>
+        <span class="badge badge-warning">ENCADRANT</span>
+    </div>
+</div>
+
+<!-- Message de bienvenue -->
+<div class="alert alert-warning">
+    <h4><i class="fas fa-info-circle"></i> Bienvenue dans votre espace encadrant !</h4>
+    <p class="mb-0">
+        Ici vous pouvez gérer vos stages, suivre les étudiants, valider les documents et évaluer les stages.
+    </p>
+</div>
+
+<!-- Statistiques encadrant -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ mes_stages|default(0) }}</h4>
+                        <p class="mb-0">Mes stages</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-briefcase fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ mes_etudiants|default(0) }}</h4>
+                        <p class="mb-0">Étudiants encadrés</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ demandes_attente|default(0) }}</h4>
+                        <p class="mb-0">Demandes en attente</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ documents_valider|default(0) }}</h4>
+                        <p class="mb-0">Documents à valider</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-file-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions rapides -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Actions rapides</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ path('app_encadrant_space_stages') }}" class="btn btn-warning btn-block">
+                            <i class="fas fa-briefcase"></i> Mes stages
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ path('app_encadrant_space_demandes') }}" class="btn btn-info btn-block">
+                            <i class="fas fa-file-alt"></i> Demandes
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ path('app_encadrant_space_etudiants') }}" class="btn btn-success btn-block">
+                            <i class="fas fa-users"></i> Étudiants
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ path('app_encadrant_space_documents') }}" class="btn btn-primary btn-block">
+                            <i class="fas fa-folder"></i> Documents
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mes stages récents -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-briefcase"></i> Mes stages</h5>
+                <a href="{{ path('app_encadrant_space_stages') }}" class="btn btn-sm btn-outline-warning">Voir tout</a>
+            </div>
+            <div class="card-body">
+                {% if mes_stages_recents is defined and mes_stages_recents|length > 0 %}
+                    <div class="list-group">
+                        {% for stage in mes_stages_recents %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ stage.titre }}</h6>
+                                        <small class="text-muted">{{ stage.typestage }} - {{ stage.duree }}</small>
+                                    </div>
+                                    <span class="badge badge-warning">{{ stage.department.nom }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Vous n'avez pas encore de stage assigné.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Demandes en attente -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-clock"></i> Demandes en attente</h5>
+                <a href="{{ path('app_encadrant_space_demandes') }}" class="btn btn-sm btn-outline-info">Voir tout</a>
+            </div>
+            <div class="card-body">
+                {% if demandes_recentes is defined and demandes_recentes|length > 0 %}
+                    <div class="list-group">
+                        {% for demande in demandes_recentes %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ demande.stage.titre }}</h6>
+                                        <small class="text-muted">{{ demande.etudiant.email }}</small>
+                                    </div>
+                                    <span class="badge badge-warning">En attente</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aucune demande en attente.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Étudiants encadrés -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-users"></i> Étudiants encadrés</h5>
+                <a href="{{ path('app_encadrant_space_etudiants') }}" class="btn btn-sm btn-outline-success">Voir tout</a>
+            </div>
+            <div class="card-body">
+                {% if etudiants_encadres is defined and etudiants_encadres|length > 0 %}
+                    <div class="list-group">
+                        {% for etudiant in etudiants_encadres %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ etudiant.email }}</h6>
+                                        <small class="text-muted">Étudiant encadré</small>
+                                    </div>
+                                    <span class="badge badge-success">Actif</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-user-graduate fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Vous n'avez pas encore d'étudiant assigné.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Documents à valider -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-file-alt"></i> Documents à valider</h5>
+                <a href="{{ path('app_encadrant_space_documents') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+            </div>
+            <div class="card-body">
+                {% if documents_attente is defined and documents_attente|length > 0 %}
+                    <div class="list-group">
+                        {% for document in documents_attente %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ document.type }}</h6>
+                                        <small class="text-muted">{{ document.demandestage.etudiant.email }}</small>
+                                    </div>
+                                    <span class="badge badge-warning">En attente</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-double fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aucun document en attente de validation.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tâches récentes -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-tasks"></i> Tâches récentes</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-clipboard-check fa-3x text-success mb-3"></i>
+                            <h6>Validation des demandes</h6>
+                            <p class="text-muted small">Examinez et validez les demandes de stage</p>
+                            <a href="{{ path('app_encadrant_space_demandes') }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-check"></i> Valider
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-file-signature fa-3x text-primary mb-3"></i>
+                            <h6>Documents</h6>
+                            <p class="text-muted small">Validez les rapports et documents</p>
+                            <a href="{{ path('app_encadrant_space_documents') }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> Examiner
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                            <h6>Suivi</h6>
+                            <p class="text-muted small">Suivez la progression des stages</p>
+                            <a href="{{ path('app_encadrant_space_etudiants') }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-chart-bar"></i> Suivre
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

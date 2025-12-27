@@ -3,37 +3,46 @@
 {% block title %}Document index{% endblock %}
 
 {% block body %}
-    <h1>Document index</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-folder-open"></i> Documents</h1>
+        {% if is_granted('ROLE_ETUDIANT') %}
+            <a class="btn btn-primary" href="{{ path('app_document_new') }}">Ajouter</a>
+        {% endif %}
+    </div>
 
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Type</th>
                 <th>Fichier</th>
-                <th>Dateupload</th>
-                <th>actions</th>
+                <th>Étudiant</th>
+                <th>Stage</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for document in documents %}
             <tr>
-                <td>{{ document.id }}</td>
                 <td>{{ document.type }}</td>
                 <td>{{ document.fichier }}</td>
-                <td>{{ document.dateupload ? document.dateupload|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ document.demandestage ? document.demandestage.etudiant.email : '' }}</td>
+                <td>{{ document.demandestage ? document.demandestage.stage.titre : '' }}</td>
+                <td>{{ document.statutValidation }}</td>
+                <td>{{ document.dateupload ? document.dateupload|date('d/m/Y') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_document_show', {'id': document.id}) }}">show</a>
-                    <a href="{{ path('app_document_edit', {'id': document.id}) }}">edit</a>
+                    <a class="btn btn-sm btn-info" href="{{ path('app_document_show', {'id': document.id}) }}">Voir</a>
+                    {% if is_granted('ROLE_ETUDIANT') %}
+                        <a class="btn btn-sm btn-warning" href="{{ path('app_document_edit', {'id': document.id}) }}">Modifier</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="5">no records found</td>
+                <td colspan="7">Aucun document</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('app_document_new') }}">Create new</a>
 {% endblock %}

@@ -1,41 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Etudiant index{% endblock %}
+{% block title %}Liste des Étudiants{% endblock %}
 
 {% block body %}
-    <h1>Etudiant index</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-users"></i> Liste des Étudiants</h1>
+    <a href="{{ path('app_etudiant_new') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Ajouter
+    </a>
+</div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Email</th>
-                <th>Telephone</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for etudiant in etudiants %}
-            <tr>
-                <td>{{ etudiant.id }}</td>
-                <td>{{ etudiant.nom }}</td>
-                <td>{{ etudiant.prenom }}</td>
-                <td>{{ etudiant.email }}</td>
-                <td>{{ etudiant.telephone }}</td>
-                <td>
-                    <a href="{{ path('app_etudiant_show', {'id': etudiant.id}) }}">show</a>
-                    <a href="{{ path('app_etudiant_edit', {'id': etudiant.id}) }}">edit</a>
-                </td>
-            </tr>
+<div class="card">
+    <div class="card-body">
+        {% if etudiants is empty %}
+            <div class="alert alert-info mb-0">Aucun étudiant trouvé.</div>
         {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_etudiant_new') }}">Create new</a>
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for etudiant in etudiants %}
+                        <tr>
+                            <td>{{ etudiant.nom }}</td>
+                            <td>{{ etudiant.prenom }}</td>
+                            <td>{{ etudiant.email }}</td>
+                            <td>{{ etudiant.telephone }}</td>
+                            <td>
+                                <a class="btn btn-sm btn-info" href="{{ path('app_etudiant_show', {'id': etudiant.id}) }}">Voir</a>
+                                <a class="btn btn-sm btn-warning" href="{{ path('app_etudiant_edit', {'id': etudiant.id}) }}">Modifier</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

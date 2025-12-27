@@ -1,0 +1,67 @@
+# Gestion des Stages - Application Symfony
+
+## Description
+
+Application de gestion complète des stages universitaires avec trois rôles d'utilisateurs :
+- **Étudiants** : Soumission des demandes de stage et gestion des documents
+- **Encadrants** : Suivi des étudiants, validation des documents et évaluation
+- **Administrateurs** : Gestion complète du système et des utilisateurs
+
+## Prérequis
+
+- PHP 8.1 ou supérieur
+- Composer 2.0 ou supérieur
+- MySQL/MariaDB ou PostgreSQL
+- Symfony CLI (recommandé)
+
+## Installation
+
+### 1. Cloner le projet
+
+```bash
+git clone <url-du-repository>
+cd gestion_de_stage
+2. Installer les dépendances
+bash
+composer install
+3. Configuration de la base de données
+Créez votre base de données vide puis configurez le fichier .env :
+
+bash
+# Copier le fichier d'exemple
+cp .env.example .env
+# Modifier les paramètres de base de données dans .env
+DATABASE_URL="mysql://user:password@127.0.0.1:3306/gestion_de_stage?serverVersion=8.0"
+4. Créer la base de données
+bash
+php bin/console doctrine:database:create
+5. Lancer les migrations
+bash
+php bin/console doctrine:migrations:migrate
+6. Charger les données de test (fixtures)
+bash
+php bin/console doctrine:fixtures:load
+Démarrage de l'application
+Avec Symfony CLI (recommandé)
+bash
+symfony server:start
+Avec le serveur PHP intégré
+bash
+php -S localhost:8000 -t public/
+L'application sera accessible à l'adresse : http://localhost:8000
+
+Utilisateurs de test
+Après avoir chargé les fixtures, vous pouvez vous connecter avec :
+
+Administrateur :
+
+Email : admin@example.com
+Mot de passe : password
+Encadrant :
+
+Email : encadrant@example.com
+Mot de passe : password
+Étudiant :
+
+Email : etudiant@example.com
+Mot de passe : password

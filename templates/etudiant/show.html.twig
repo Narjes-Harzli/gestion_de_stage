@@ -1,38 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Etudiant{% endblock %}
+{% block title %}Détails Étudiant{% endblock %}
 
 {% block body %}
-    <h1>Etudiant</h1>
+<h1 class="mb-4">Détails de l'étudiant</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ etudiant.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ etudiant.nom }}</td>
-            </tr>
-            <tr>
-                <th>Prenom</th>
-                <td>{{ etudiant.prenom }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ etudiant.email }}</td>
-            </tr>
-            <tr>
-                <th>Telephone</th>
-                <td>{{ etudiant.telephone }}</td>
-            </tr>
-        </tbody>
-    </table>
+<div class="card mb-3">
+    <div class="card-body">
+        <p><strong>Nom:</strong> {{ etudiant.nom }}</p>
+        <p><strong>Prénom:</strong> {{ etudiant.prenom }}</p>
+        <p><strong>Email:</strong> {{ etudiant.email }}</p>
+        <p><strong>Téléphone:</strong> {{ etudiant.telephone }}</p>
+    </div>
+</div>
 
-    <a href="{{ path('app_etudiant_index') }}">back to list</a>
-
-    <a href="{{ path('app_etudiant_edit', {'id': etudiant.id}) }}">edit</a>
-
-    {{ include('etudiant/_delete_form.html.twig') }}
+<a class="btn btn-warning" href="{{ path('app_etudiant_edit', {'id': etudiant.id}) }}">Modifier</a>
+<a class="btn btn-secondary" href="{{ path('app_etudiant_index') }}">Retour</a>
 {% endblock %}

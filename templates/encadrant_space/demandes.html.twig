@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Encadrant - Demandes{% endblock %}
+
+{% block body %}
+<h1 class="mb-4"><i class="fas fa-file-alt"></i> Demandes de mes stages</h1>
+
+{% if demandestages is empty %}
+    <div class="alert alert-info">Aucune demande liée à tes stages.</div>
+{% else %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>Étudiant</th>
+                <th>Stage</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for d in demandestages %}
+                <tr>
+                    <td>{{ d.etudiant.email }}</td>
+                    <td>{{ d.stage.titre }}</td>
+                    <td>{{ d.statut }}</td>
+                    <td>{{ d.datedemande ? d.datedemande|date('d/m/Y') : '' }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info" href="{{ path('app_demandestage_show', {'id': d.id}) }}">Voir</a>
+                        <a class="btn btn-sm btn-warning" href="{{ path('app_demandestage_edit', {'id': d.id}) }}">Suivi / Évaluation</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

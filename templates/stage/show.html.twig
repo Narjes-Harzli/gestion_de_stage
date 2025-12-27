@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Stage{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Détails du stage</h1>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <p><strong>Titre:</strong> {{ stage.titre }}</p>
+        <p><strong>Type:</strong> {{ stage.typestage }}</p>
+        <p><strong>Durée:</strong> {{ stage.duree }}</p>
+        <p><strong>Département:</strong> {{ stage.department.nom }}</p>
+        <p><strong>Description:</strong> {{ stage.description }}</p>
+    </div>
+</div>
+
+<a class="btn btn-warning" href="{{ path('app_stage_edit', {'id': stage.id}) }}">Modifier</a>
+<a class="btn btn-secondary" href="{{ path('app_stage_index') }}">Retour</a>
+{% endblock %}

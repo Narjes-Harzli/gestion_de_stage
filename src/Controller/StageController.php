@@ -6,47 +6,52 @@ use App\Entity\Stage;
 use App\Form\StageType;
 use App\Repository\StageRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/stages')]
-class StageController extends AbstractController
+#[Route('/stage')]
+final class StageController extends AbstractController
 {
-    #[Route('/', name: 'stage_index', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
-    public function index(StageRepository $repo): Response
+    private function denyUnlessAdminOrEncadrant(): void
+    {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_ENCADRANT')) {
+            throw $this->createAccessDeniedException();
+        }
+    }
+
+    #[Route(name: 'app_stage_index', methods: ['GET'])]
+    public function index(StageRepository $stageRepository): Response
     {
         return $this->render('stage/index.html.twig', [
-            'stages' => $repo->findAll(),
+            'stages' => $stageRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'stage_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    #[Route('/new', name: 'app_stage_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyUnlessAdminOrEncadrant();
+
         $stage = new Stage();
         $form = $this->createForm(StageType::class, $stage);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($stage);
-            $em->flush();
+            $entityManager->persist($stage);
+            $entityManager->flush();
 
-            $this->addFlash('success', 'Stage créé avec succès.');
-            return $this->redirectToRoute('stage_index');
+            return $this->redirectToRoute('app_stage_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('stage/new.html.twig', [
+            'stage' => $stage,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}', name: 'stage_show', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[Route('/{id}', name: 'app_stage_show', methods: ['GET'])]
     public function show(Stage $stage): Response
     {
         return $this->render('stage/show.html.twig', [
@@ -54,34 +59,36 @@ class StageController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'stage_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, Stage $stage, EntityManagerInterface $em): Response
+    #[Route('/{id}/edit', name: 'app_stage_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Stage $stage, EntityManagerInterface $entityManager): Response
     {
+        $this->denyUnlessAdminOrEncadrant();
+
         $form = $this->createForm(StageType::class, $stage);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Stage modifié avec succès.');
-            return $this->redirectToRoute('stage_index');
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_stage_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('stage/edit.html.twig', [
+            'stage' => $stage,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}', name: 'stage_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function delete(Request $request, Stage $stage, EntityManagerInterface $em): Response
+    #[Route('/{id}', name: 'app_stage_delete', methods: ['POST'])]
+    public function delete(Request $request, Stage $stage, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$stage->getId(), $request->request->get('_token'))) {
-            $em->remove($stage);
-            $em->flush();
-            $this->addFlash('success', 'Stage supprimé avec succès.');
+        $this->denyUnlessAdminOrEncadrant();
+
+        if ($this->isCsrfTokenValid('delete'.$stage->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($stage);
+            $entityManager->flush();
         }
 
-        return $this->redirectToRoute('stage_index');
+        return $this->redirectToRoute('app_stage_index', [], Response::HTTP_SEE_OTHER);
     }
 }

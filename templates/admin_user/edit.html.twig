@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Modifier utilisateur{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Modifier utilisateur</h1>
+
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-warning">Mettre à jour</button>
+            <a class="btn btn-secondary" href="{{ path('app_admin_user_index') }}">Retour</a>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

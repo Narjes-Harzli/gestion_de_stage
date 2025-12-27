@@ -3,9 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\StageRepository;
-use BcMath\Number;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: StageRepository::class)]
 class Stage
@@ -26,6 +29,22 @@ class Stage
 
     #[ORM\Column]
     private ?int $duree = null;
+
+    #[ORM\ManyToOne(inversedBy: 'stages')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Department $department = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $encadrant = null;
+
+    #[ORM\OneToMany(targetEntity: Demandestage::class, mappedBy: 'stage')]
+    private Collection $demandestages;
+
+    public function __construct()
+    {
+        $this->demandestages = new ArrayCollection();
+    }
 
     
     public function getId(): ?int
@@ -77,6 +96,59 @@ class Stage
     public function setDuree(int $duree): static
     {
         $this->duree = $duree;
+
+        return $this;
+    }
+
+    public function getDepartment(): ?Department
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(?Department $department): static
+    {
+        $this->department = $department;
+
+        return $this;
+    }
+
+    public function getEncadrant(): ?User
+    {
+        return $this->encadrant;
+    }
+
+    public function setEncadrant(?User $encadrant): static
+    {
+        $this->encadrant = $encadrant;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Demandestage>
+     */
+    public function getDemandestages(): Collection
+    {
+        return $this->demandestages;
+    }
+
+    public function addDemandestage(Demandestage $demandestage): static
+    {
+        if (!$this->demandestages->contains($demandestage)) {
+            $this->demandestages->add($demandestage);
+            $demandestage->setStage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemandestage(Demandestage $demandestage): static
+    {
+        if ($this->demandestages->removeElement($demandestage)) {
+            // set the owning side to null (unless already changed)
+            if ($demandestage->getStage() === $this) {
+                $demandestage->setStage(null);
+            }
+        }
 
         return $this;
     }
